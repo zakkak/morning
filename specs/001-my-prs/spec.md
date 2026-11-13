@@ -33,10 +33,12 @@ a PR with failing CI, a green PR and a draft. Check the rows and their order.
 
 1. **Given** a PR whose review decision is "changes requested", **When** I run
    `morning prs`, **Then** it appears in the first group, with action "address review".
-2. **Given** a PR with a failing check that also fails on the base branch, **When** I run
+2. **Given** a PR with a failing check that also failed on the most recent base-branch
+   commit that ran a check with the same name (within the last 30 commits), **When** I run
    `morning prs`, **Then** the failure is marked "unrelated (fails on base)" and does not
    put the PR in the CI-failure group.
-3. **Given** a PR with a failing check that passes on the base branch, **When** I run
+3. **Given** a PR with a failing check that passed on that most recent base-branch commit,
+   or that has no base-branch counterpart, **When** I run
    `morning prs`, **Then** the PR is in the second group, with the failing check named.
 4. **Given** a failing check whose earlier attempt on the same commit passed, **When** I
    run `morning prs`, **Then** it is marked "likely flaky".

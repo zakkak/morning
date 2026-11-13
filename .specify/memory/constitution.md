@@ -73,8 +73,8 @@ labels, reviews, reruns, issue changes or posts. This is enforced in code:
 - **GitHub access**: GraphQL by default through `quarkus-smallrye-graphql-client`.
   hub4j (`org.kohsuke:github-api`) is used only for what GraphQL does not expose:
   Actions runs, jobs and logs, and PR diffs. See ADR-0004.
-- **Configuration**: a YAML routine of built-in section types, loaded through a typed
-  `@ConfigMapping` (ADR-0008).
+- **Configuration**: a YAML routine of built-in section types, loaded into typed records with
+  Jackson YAML and Bean Validation (ADR-0008).
   - Configuration MUST NOT be a source of secrets.
   - It MAY widen **read** scope only: which repositories are fetched, and which ones
     LLM tools may read (`repo` plus `related-repos`).

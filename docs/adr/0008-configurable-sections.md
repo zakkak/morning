@@ -30,9 +30,14 @@ awkward even for its author when interests change.
     `quarkus-ecosystem-issue.java` convention.
 
   New strategies are added in code when a real repository needs one.
-- **Format and loading.** YAML, read with `quarkus-config-yaml` into a typed
-  `@ConfigMapping(prefix = "morning")`. That gives validation, lists of groups, and
-  environment-variable overrides with no custom parser.
+- **Format and loading.** YAML, read with Jackson (`jackson-dataformat-yaml`, managed by
+  the Quarkus BOM) into Java records.
+  - Sections are polymorphic through Jackson's `@JsonTypeInfo(property = "type")` and
+    `@JsonSubTypes`.
+  - Unknown properties are rejected.
+  - Constraints are checked with Bean Validation (`quarkus-hibernate-validator`).
+  - Errors carry the field path (for example `morning.sections[1].repo`).
+  - The user's routine is kept separate from the app's own `application.properties`.
   - Default location: `~/.config/morning/config.yaml`; `--config <path>` overrides it.
   - With no config, the CLI exits with an error pointing to `examples/`. There are no
     built-in default repositories.
@@ -53,8 +58,14 @@ awkward even for its author when interests change.
   workflows.
 - **A plugin SPI for new section types.** Rejected as premature (YAGNI). Revisit if
   several external contributors need custom types.
-- **A custom config parser or file format.** Rejected: Quarkus config already provides
-  typed, validated YAML.
+- **`quarkus-config-yaml` with a typed `@ConfigMapping`** (this ADR's first draft).
+  Rejected during planning of 001 (research R2):
+  - SmallRye config mappings have no type-discriminated polymorphism, so a list of
+    differently-typed sections would need one superset group plus hand-written per-type
+    validation.
+  - Quarkus resolves config at startup, before Picocli parses `--config`.
+- **A custom config parser or file format.** Rejected: Jackson and Bean Validation
+  already provide typed, validated YAML.
 
 ## Consequences
 

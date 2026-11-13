@@ -8,7 +8,7 @@
 ## Overview
 
 ```
-morning <command>            config.yaml ──► MorningConfig (@ConfigMapping) ──► sections
+morning <command>            config.yaml ──► MorningConfig (Jackson YAML records) ──► sections
    │
    ▼  (for each configured section of the command's type)
 fetch (deterministic) ──► analyse (rules + optional isolated LLM calls) ──► render
@@ -25,7 +25,7 @@ other sections, so it does not fetch again.
 | Component | Responsibility | ADR | Implemented |
 |---|---|---|---|
 | Picocli commands | `all`, `ci`, `prs`, `reviews`, `summary`; common options | 0002 | no |
-| `MorningConfig` | Typed `@ConfigMapping(prefix = "morning")` over `quarkus-config-yaml`; validates sections before any API call | 0008 | no |
+| `MorningConfig` | Jackson YAML into records, polymorphic on `type`, with Bean Validation and a secret-value check; validates before any API call | 0008 | no |
 | `GitHubCredentials` | Token from `GITHUB_TOKEN`, then `GH_TOKEN`, then `gh auth token`; injected only into the two GitHub clients | 0003 | no |
 | `GraphQLQueries` | Runs named `src/main/resources/graphql/*.graphql` documents; rejects mutations and subscriptions | 0004 | no |
 | hub4j fetchers | Actions runs, jobs and logs; PR diffs | 0004 | no |
