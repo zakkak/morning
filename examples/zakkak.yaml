@@ -1,0 +1,37 @@
+# Example morning configuration: Mandrel/GraalVM/Quarkus native-image maintainer.
+# Copy to ~/.config/morning/config.yaml and adapt. Never put secrets here:
+# the GitHub token comes from GITHUB_TOKEN, GH_TOKEN or `gh auth token`.
+# Schema and section types: docs/architecture.md, "Configuration" (ADR-0008).
+morning:
+  sections:
+    - type: my-prs
+      name: My PRs
+
+    - type: ci-status
+      name: Mandrel CI
+      repo: graalvm/mandrel
+      include-fork-prs: false
+      tracking:
+        strategy: workflow-inputs
+        issue-keys: [issue-number, mandrel-it-issue-number]
+      related-repos: [oracle/graal]
+
+    - type: review-candidates
+      name: Quarkus native-image reviews
+      repo: quarkusio/quarkus
+      labels: [area/native-image, area/mandrel]
+      paths:
+        - "**/graal/**"
+        - "**/*Substitution*.java"
+        - "**/nativeimage/**"
+        - "core/deployment/**/pkg/steps/Native*"
+        - "integration-tests/**/native*"
+        - "**/*.native.*"
+        - "**/reflect-config*.json"
+      on-hold-labels: [triage/needs-rebase, triage/on-ice]
+
+    - type: summary
+      order: [changes-requested, my-ci-failures, new-ci-failures, needs-owner, reviews]
+
+  llm:
+    max-calls: 15
