@@ -1,0 +1,370 @@
+{
+ "data": {
+  "search": {
+   "issueCount": 7,
+   "nodes": [
+    {
+     "id": "PR_1",
+     "number": 1,
+     "title": "Changes were requested here",
+     "url": "https://github.com/example-org/alpha/pull/1",
+     "isDraft": false,
+     "mergeable": "MERGEABLE",
+     "reviewDecision": "CHANGES_REQUESTED",
+     "updatedAt": "2026-11-10T09:00:00Z",
+     "repository": {
+      "nameWithOwner": "example-org/alpha"
+     },
+     "baseRefName": "main",
+     "baseRef": {
+      "id": "REF_alpha_main"
+     },
+     "headRefOid": "ffffffffffffffffffffffffffffffffffffffff",
+     "commits": {
+      "nodes": [
+       {
+        "commit": {
+         "statusCheckRollup": {
+          "state": "SUCCESS",
+          "contexts": {
+           "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "CURSOR0"
+           },
+           "nodes": [
+            {
+             "__typename": "CheckRun",
+             "name": "build",
+             "status": "COMPLETED",
+             "conclusion": "SUCCESS",
+             "detailsUrl": "https://github.com/example-org/runs/build",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "PR_2",
+     "number": 2,
+     "title": "Fails on base too",
+     "url": "https://github.com/example-org/alpha/pull/2",
+     "isDraft": false,
+     "mergeable": "MERGEABLE",
+     "reviewDecision": "REVIEW_REQUIRED",
+     "updatedAt": "2026-11-01T09:00:00Z",
+     "repository": {
+      "nameWithOwner": "example-org/alpha"
+     },
+     "baseRefName": "main",
+     "baseRef": {
+      "id": "REF_alpha_main"
+     },
+     "headRefOid": "ffffffffffffffffffffffffffffffffffffffff",
+     "commits": {
+      "nodes": [
+       {
+        "commit": {
+         "statusCheckRollup": {
+          "state": "FAILURE",
+          "contexts": {
+           "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "CURSOR0"
+           },
+           "nodes": [
+            {
+             "__typename": "CheckRun",
+             "name": "build",
+             "status": "COMPLETED",
+             "conclusion": "FAILURE",
+             "detailsUrl": "https://github.com/example-org/runs/build",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "PR_3",
+     "number": 3,
+     "title": "My change broke a test",
+     "url": "https://github.com/example-org/beta/pull/3",
+     "isDraft": false,
+     "mergeable": "MERGEABLE",
+     "reviewDecision": "REVIEW_REQUIRED",
+     "updatedAt": "2026-11-09T09:00:00Z",
+     "repository": {
+      "nameWithOwner": "example-org/beta"
+     },
+     "baseRefName": "main",
+     "baseRef": {
+      "id": "REF_beta_main"
+     },
+     "headRefOid": "ffffffffffffffffffffffffffffffffffffffff",
+     "commits": {
+      "nodes": [
+       {
+        "commit": {
+         "statusCheckRollup": {
+          "state": "FAILURE",
+          "contexts": {
+           "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "CURSOR0"
+           },
+           "nodes": [
+            {
+             "__typename": "CheckRun",
+             "name": "test",
+             "status": "COMPLETED",
+             "conclusion": "FAILURE",
+             "detailsUrl": "https://github.com/example-org/runs/test",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            },
+            {
+             "__typename": "CheckRun",
+             "name": "build",
+             "status": "COMPLETED",
+             "conclusion": "SUCCESS",
+             "detailsUrl": "https://github.com/example-org/runs/build",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "PR_4",
+     "number": 4,
+     "title": "A flaky integration test",
+     "url": "https://github.com/example-org/beta/pull/4",
+     "isDraft": false,
+     "mergeable": "MERGEABLE",
+     "reviewDecision": "APPROVED",
+     "updatedAt": "2026-11-02T09:00:00Z",
+     "repository": {
+      "nameWithOwner": "example-org/beta"
+     },
+     "baseRefName": "main",
+     "baseRef": {
+      "id": "REF_beta_main"
+     },
+     "headRefOid": "ffffffffffffffffffffffffffffffffffffffff",
+     "commits": {
+      "nodes": [
+       {
+        "commit": {
+         "statusCheckRollup": {
+          "state": "FAILURE",
+          "contexts": {
+           "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "CURSOR0"
+           },
+           "nodes": [
+            {
+             "__typename": "CheckRun",
+             "name": "it",
+             "status": "COMPLETED",
+             "conclusion": "FAILURE",
+             "detailsUrl": "https://github.com/example-org/runs/it",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "PR_5",
+     "number": 5,
+     "title": "Green and approved",
+     "url": "https://github.com/other-org/gamma/pull/5",
+     "isDraft": false,
+     "mergeable": "MERGEABLE",
+     "reviewDecision": "APPROVED",
+     "updatedAt": "2026-11-03T09:00:00Z",
+     "repository": {
+      "nameWithOwner": "other-org/gamma"
+     },
+     "baseRefName": "main",
+     "baseRef": {
+      "id": "REF_gamma_main"
+     },
+     "headRefOid": "ffffffffffffffffffffffffffffffffffffffff",
+     "commits": {
+      "nodes": [
+       {
+        "commit": {
+         "statusCheckRollup": {
+          "state": "SUCCESS",
+          "contexts": {
+           "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "CURSOR0"
+           },
+           "nodes": [
+            {
+             "__typename": "CheckRun",
+             "name": "build",
+             "status": "COMPLETED",
+             "conclusion": "SUCCESS",
+             "detailsUrl": "https://github.com/example-org/runs/build",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            },
+            {
+             "__typename": "StatusContext",
+             "context": "ci/external",
+             "state": "SUCCESS",
+             "targetUrl": "https://ci.example.com/ci/external"
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "PR_6",
+     "number": 6,
+     "title": "Work in progress",
+     "url": "https://github.com/example-org/alpha/pull/6",
+     "isDraft": true,
+     "mergeable": "UNKNOWN",
+     "reviewDecision": null,
+     "updatedAt": "2026-11-04T09:00:00Z",
+     "repository": {
+      "nameWithOwner": "example-org/alpha"
+     },
+     "baseRefName": "main",
+     "baseRef": {
+      "id": "REF_alpha_main"
+     },
+     "headRefOid": "ffffffffffffffffffffffffffffffffffffffff",
+     "commits": {
+      "nodes": [
+       {
+        "commit": {
+         "statusCheckRollup": {
+          "state": "PENDING",
+          "contexts": {
+           "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "CURSOR0"
+           },
+           "nodes": [
+            {
+             "__typename": "CheckRun",
+             "name": "build",
+             "status": "IN_PROGRESS",
+             "conclusion": null,
+             "detailsUrl": "https://github.com/example-org/runs/build",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "PR_7",
+     "number": 7,
+     "title": "Many checks, one new",
+     "url": "https://github.com/example-org/beta/pull/7",
+     "isDraft": false,
+     "mergeable": "MERGEABLE",
+     "reviewDecision": "REVIEW_REQUIRED",
+     "updatedAt": "2026-11-05T09:00:00Z",
+     "repository": {
+      "nameWithOwner": "example-org/beta"
+     },
+     "baseRefName": "main",
+     "baseRef": {
+      "id": "REF_beta_main"
+     },
+     "headRefOid": "ffffffffffffffffffffffffffffffffffffffff",
+     "commits": {
+      "nodes": [
+       {
+        "commit": {
+         "statusCheckRollup": {
+          "state": "FAILURE",
+          "contexts": {
+           "pageInfo": {
+            "hasNextPage": true,
+            "endCursor": "CURSOR1"
+           },
+           "nodes": [
+            {
+             "__typename": "CheckRun",
+             "name": "lint",
+             "status": "COMPLETED",
+             "conclusion": "FAILURE",
+             "detailsUrl": "https://github.com/example-org/runs/lint",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ }
+}

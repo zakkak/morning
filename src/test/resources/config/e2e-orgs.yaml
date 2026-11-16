@@ -1,0 +1,9 @@
+morning:
+  sections:
+    - type: my-prs
+      name: Mine
+      include-orgs: [example-org]
+      exclude-orgs: [other-org]
+    - type: my-prs
+      name: Others
+      include-orgs: [other-org]

@@ -1,0 +1,30 @@
+{
+ "data": {
+  "node": {
+   "commits": {
+    "nodes": [
+     {
+      "commit": {
+       "statusCheckRollup": {
+        "contexts": {
+         "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": "CURSOR2"
+         },
+         "nodes": [
+          {
+           "__typename": "StatusContext",
+           "context": "ci/page-two",
+           "state": "ERROR",
+           "targetUrl": "https://ci.example.com/ci/page-two"
+          }
+         ]
+        }
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}

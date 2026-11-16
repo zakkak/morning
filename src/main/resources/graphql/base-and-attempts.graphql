@@ -1,0 +1,59 @@
+# Run only when some PR has a failing check (research R4, R5). One request for both:
+#  - bases: the last 30 commits of each distinct base branch, with their checks, to tell
+#    whether a failing check also fails on base;
+#  - attempts: every check run (all attempts) on each failing PR's head commit, to spot
+#    checks that failed but passed in an earlier attempt.
+# Values are node IDs from MyPrs, passed as variables.
+query BaseAndAttempts($refIds: [ID!]!, $prIds: [ID!]!) {
+  bases: nodes(ids: $refIds) {
+    ... on Ref {
+      id
+      target {
+        ... on Commit {
+          history(first: 30) {
+            nodes {
+              oid
+              committedDate
+              statusCheckRollup {
+                contexts(first: 100) {
+                  nodes { ...CheckFields }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  attempts: nodes(ids: $prIds) {
+    ... on PullRequest {
+      id
+      commits(last: 1) {
+        nodes {
+          commit {
+            checkSuites(first: 50) {
+              nodes {
+                checkRuns(first: 100, filterBy: { checkType: ALL }) {
+                  nodes { name status conclusion }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment CheckFields on StatusCheckRollupContext {
+  __typename
+  ... on CheckRun {
+    name
+    status
+    conclusion
+  }
+  ... on StatusContext {
+    context
+    state
+  }
+}

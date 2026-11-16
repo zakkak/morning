@@ -1,0 +1,5 @@
+morning:
+  sections:
+    - type: my-prs
+      include-orgs: [alpha, Beta]
+      exclude-orgs: [beta]

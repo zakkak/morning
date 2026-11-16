@@ -106,7 +106,7 @@ classifications, `apiRequests <= 3`, token never printed.
 
 - [ ] T034 [US1] Record and sanitise fixtures for search, base-and-attempts and paging; `src/test/resources/fixtures/my-prs/*.json`
 - [ ] T035 [US1] `PrsCommand` and `AllCommand` (001: my-prs only, notes "ci, reviews, summary: not implemented yet"); `--section` filter; unsupported section types → "not supported yet (planned in feature NNN)"; exit codes and messages per contracts/cli.md; `M/cli/PrsCommand.java`, `M/cli/AllCommand.java`
-- [ ] T036 [US1] `PrsCommandIT` (`@QuarkusMainTest` + WireMock): US1 scenarios 1–4, US3 scenarios 1–4 (no GitHub request on config error), "No open PRs", `--format md|json`, SC-001 (`apiRequests <= 3`), SC-003 (sentinel token absent from stdout, stderr and logs); `T/cli/PrsCommandIT.java`
+- [ ] T036 [US1] `PrsCommandTest` (`@QuarkusMainTest` + WireMock): US1 scenarios 1–4, US3 scenarios 1–4 (no GitHub request on config error), "No open PRs", `--format md|json`, SC-001 (`apiRequests <= 3`), SC-003 (sentinel token absent from stdout, stderr and logs); `T/cli/PrsCommandTest.java`
 
 **Checkpoint**: `./mvnw verify` green; `morning prs` usable.
 

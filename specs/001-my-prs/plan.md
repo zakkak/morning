@@ -121,7 +121,7 @@ src/test/java/net/zakkak/morning/
 ├── config/         # ConfigLoaderTest (valid example, unknown type, missing field, secret value, overlap)
 ├── prs/            # FailureClassifierTest, PrSorterTest (pure unit tests)
 ├── render/         # TableTest (wrapping, width, OSC-8 width-neutral)
-└── cli/            # PrsCommandIT (@QuarkusMainTest + WireMock): US1 1–5, US3 1–4, SC-001, SC-003
+└── cli/            # PrsCommandTest (@QuarkusMainTest + WireMock): US1 1–5, US3 1–4, SC-001, SC-003
 src/test/resources/
 ├── github/schema.docs.graphql, github/SCHEMA_VERSION
 ├── fixtures/my-prs/*.json               # sanitised recordings

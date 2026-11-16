@@ -1,0 +1,52 @@
+# Open PRs authored by the viewer, with review state and the head commit's checks.
+# Variables: $q is the search string built by MyPrsFetcher (qualifiers only, no user text).
+query MyPrs($q: String!) {
+  search(query: $q, type: ISSUE, first: 50) {
+    issueCount
+    nodes {
+      ... on PullRequest {
+        id
+        number
+        title
+        url
+        isDraft
+        mergeable
+        reviewDecision
+        updatedAt
+        repository { nameWithOwner }
+        baseRefName
+        baseRef { id }
+        headRefOid
+        commits(last: 1) {
+          nodes {
+            commit {
+              statusCheckRollup {
+                state
+                contexts(first: 100) {
+                  pageInfo { hasNextPage endCursor }
+                  nodes { ...CheckFields }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment CheckFields on StatusCheckRollupContext {
+  __typename
+  ... on CheckRun {
+    name
+    status
+    conclusion
+    detailsUrl
+    checkSuite { app { slug } }
+  }
+  ... on StatusContext {
+    context
+    state
+    targetUrl
+  }
+}

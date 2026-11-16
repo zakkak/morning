@@ -1,0 +1,4 @@
+morning:
+  sections:
+    - type: summary
+      order: [changes-requested, gossip]

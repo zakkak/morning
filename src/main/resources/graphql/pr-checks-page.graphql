@@ -1,0 +1,35 @@
+# The next page of a PR's head-commit checks, for PRs with more than 100.
+query PrChecksPage($id: ID!, $after: String!) {
+  node(id: $id) {
+    ... on PullRequest {
+      commits(last: 1) {
+        nodes {
+          commit {
+            statusCheckRollup {
+              contexts(first: 100, after: $after) {
+                pageInfo { hasNextPage endCursor }
+                nodes { ...CheckFields }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment CheckFields on StatusCheckRollupContext {
+  __typename
+  ... on CheckRun {
+    name
+    status
+    conclusion
+    detailsUrl
+    checkSuite { app { slug } }
+  }
+  ... on StatusContext {
+    context
+    state
+    targetUrl
+  }
+}

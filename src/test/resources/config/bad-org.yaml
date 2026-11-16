@@ -1,0 +1,4 @@
+morning:
+  sections:
+    - type: my-prs
+      include-orgs: [ok-org, "not/an-org"]

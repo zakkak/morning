@@ -1,0 +1,214 @@
+{
+ "data": {
+  "bases": [
+   {
+    "id": "REF_alpha_main",
+    "target": {
+     "history": {
+      "nodes": [
+       {
+        "oid": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+        "committedDate": "2026-11-12T10:00:00Z",
+        "statusCheckRollup": null
+       },
+       {
+        "oid": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+        "committedDate": "2026-11-11T10:00:00Z",
+        "statusCheckRollup": {
+         "contexts": {
+          "nodes": [
+           {
+            "__typename": "CheckRun",
+            "name": "build",
+            "status": "COMPLETED",
+            "conclusion": "FAILURE"
+           }
+          ]
+         }
+        }
+       },
+       {
+        "oid": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+        "committedDate": "2026-11-10T10:00:00Z",
+        "statusCheckRollup": {
+         "contexts": {
+          "nodes": [
+           {
+            "__typename": "CheckRun",
+            "name": "build",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+           }
+          ]
+         }
+        }
+       }
+      ]
+     }
+    }
+   },
+   {
+    "id": "REF_beta_main",
+    "target": {
+     "history": {
+      "nodes": [
+       {
+        "oid": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
+        "committedDate": "2026-11-12T10:00:00Z",
+        "statusCheckRollup": {
+         "contexts": {
+          "nodes": [
+           {
+            "__typename": "CheckRun",
+            "name": "test",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+           },
+           {
+            "__typename": "StatusContext",
+            "context": "ci/page-two",
+            "state": "PENDING"
+           }
+          ]
+         }
+        }
+       },
+       {
+        "oid": "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1",
+        "committedDate": "2026-11-11T10:00:00Z",
+        "statusCheckRollup": {
+         "contexts": {
+          "nodes": [
+           {
+            "__typename": "CheckRun",
+            "name": "test",
+            "status": "COMPLETED",
+            "conclusion": "FAILURE"
+           }
+          ]
+         }
+        }
+       }
+      ]
+     }
+    }
+   }
+  ],
+  "attempts": [
+   {
+    "id": "PR_2",
+    "commits": {
+     "nodes": [
+      {
+       "commit": {
+        "checkSuites": {
+         "nodes": [
+          {
+           "checkRuns": {
+            "nodes": [
+             {
+              "name": "build",
+              "status": "COMPLETED",
+              "conclusion": "FAILURE"
+             }
+            ]
+           }
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   {
+    "id": "PR_3",
+    "commits": {
+     "nodes": [
+      {
+       "commit": {
+        "checkSuites": {
+         "nodes": [
+          {
+           "checkRuns": {
+            "nodes": [
+             {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "FAILURE"
+             },
+             {
+              "name": "build",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+             }
+            ]
+           }
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   {
+    "id": "PR_4",
+    "commits": {
+     "nodes": [
+      {
+       "commit": {
+        "checkSuites": {
+         "nodes": [
+          {
+           "checkRuns": {
+            "nodes": [
+             {
+              "name": "it",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+             },
+             {
+              "name": "it",
+              "status": "COMPLETED",
+              "conclusion": "FAILURE"
+             }
+            ]
+           }
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   {
+    "id": "PR_7",
+    "commits": {
+     "nodes": [
+      {
+       "commit": {
+        "checkSuites": {
+         "nodes": [
+          {
+           "checkRuns": {
+            "nodes": [
+             {
+              "name": "lint",
+              "status": "COMPLETED",
+              "conclusion": "FAILURE"
+             }
+            ]
+           }
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

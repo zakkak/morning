@@ -1,0 +1,7 @@
+morning:
+  sections:
+    - type: my-prs
+      name: Mine
+    - type: ci-status
+      name: CI
+      repo: example-org/alpha

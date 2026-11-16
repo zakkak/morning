@@ -1,0 +1,4 @@
+morning:
+  sections:
+    - type: my-prs
+    - type: weather

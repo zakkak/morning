@@ -1,0 +1,5 @@
+morning:
+  sections:
+    - type: my-prs
+    - type: ci-status
+      name: CI
