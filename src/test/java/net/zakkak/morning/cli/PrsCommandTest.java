@@ -103,7 +103,7 @@ class PrsCommandTest {
 
         // SC-002 / FR-004: groups in order, oldest update first within each group.
         List<Integer> order = report.path("prs").valueStream().map(p -> p.path("number").asInt()).toList();
-        assertEquals(List.of(1, 4, 7, 3, 2, 5, 6), order);
+        assertEquals(List.of(1, 4, 7, 3, 2, 5, 6, 8, 9), order);
         JsonNode prs = report.path("prs");
 
         // US1 scenario 1: changes requested first, action "address review".
@@ -114,8 +114,11 @@ class PrsCommandTest {
         assertEquals("LIKELY_FLAKY", prs.get(1).path("failures").get(0).path("class").asText());
 
         // Paging: PR #7's second page adds a failing status; pending on base means not analysed.
+        // Rule A: lint also fails on my #8.
         assertEquals(List.of("lint", "ci/page-two"),
                 prs.get(2).path("failures").valueStream().map(f -> f.path("check").asText()).toList());
+        assertEquals("UNRELATED_FAILS_ON_OTHER_PRS", prs.get(2).path("failures").get(0).path("class").asText());
+        assertEquals("also fails on my #8", prs.get(2).path("failures").get(0).path("evidence").asText());
         assertEquals("NOT_ANALYSED", prs.get(2).path("failures").get(1).path("class").asText());
 
         // US1 scenario 3: passed on the newest base commit with that check.
@@ -129,6 +132,23 @@ class PrsCommandTest {
 
         assertEquals("READY_TO_MERGE", prs.get(5).path("actions").get(0).asText());
         assertEquals("UNKNOWN", prs.get(6).path("mergeable").asText());
+
+        // Rules A and B: #8's only failure is shared with #7; its cancelled check is not a failure.
+        assertEquals("OTHER", prs.get(7).path("group").asText());
+        assertEquals(1, prs.get(7).path("failures").size());
+        assertEquals("deploy", prs.get(7).path("cancelled").get(0).asText());
+        assertEquals("AWAITING_REVIEW", prs.get(7).path("actions").get(0).asText());
+
+        // Rule C: my only PR in its repo; e2e fails on 2 of 3 other PRs to the same base.
+        assertEquals("OTHER", prs.get(8).path("group").asText());
+        assertEquals("also fails on 2 of 3 other open PRs that ran it (#100, #101)",
+                prs.get(8).path("failures").get(0).path("evidence").asText());
+
+        // Other people's PRs are fetched only for the repo that needs rule C.
+        List<LoggedRequest> base = wiremock.find(postRequestedFor(urlEqualTo("/graphql"))
+                .withRequestBody(matchingJsonPath("$.operationName", equalTo("BaseAndAttempts"))));
+        assertEquals(List.of("REPO_delta"), JSON.readTree(base.get(0).getBodyAsString()).path("variables")
+                .path("repoIds").valueStream().map(JsonNode::asText).toList());
 
         // SC-001: search, one page, base-and-attempts.
         assertEquals(3, report.path("apiRequests").asInt());
@@ -154,7 +174,7 @@ class PrsCommandTest {
         LaunchResult result = launcher.launch("--config", CONFIG, "prs", "--format", "md");
 
         String out = result.getOutput();
-        assertTrue(out.startsWith("## Mine (7 open)"), out);
+        assertTrue(out.startsWith("## Mine (9 open)"), out);
         assertTrue(out.contains("[example-org/alpha#1](https://github.com/example-org/alpha/pull/1)"), out);
         assertTrue(out.contains("unrelated (fails on base): build"), out);
         assertTrue(out.contains("likely flaky: it"), out);
@@ -239,7 +259,7 @@ class PrsCommandTest {
         assertTrue(result.getErrorOutput().contains(
                 "morning: section \"CI\": ci-status is not supported yet (planned in feature 002)"),
                 result.getErrorOutput());
-        assertTrue(result.getOutput().contains("## Mine (7 open)"), result.getOutput());
+        assertTrue(result.getOutput().contains("## Mine (9 open)"), result.getOutput());
     }
 
     @Test

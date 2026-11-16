@@ -42,6 +42,16 @@ a PR with failing CI, a green PR and a draft. Check the rows and their order.
    `morning prs`, **Then** the PR is in the second group, with the failing check named.
 4. **Given** a failing check whose earlier attempt on the same commit passed, **When** I
    run `morning prs`, **Then** it is marked "likely flaky".
+6. **Given** a failing check that also fails on another of my open PRs to the same
+   repository and base branch, and passes on no more of them than it fails on, **When**
+   I run `morning prs`, **Then** it is marked "likely unrelated (fails on other PRs)",
+   naming those PRs, and does not put the PR in the CI-failure group.
+7. **Given** a failing check on my only open PR to that repository and base branch, where
+   it also fails on at least 2 of the 30 most recently updated open PRs by others to the
+   same base, and passes on no more than it fails on, **When** I run `morning prs`,
+   **Then** it is marked the same way, with the counts.
+8. **Given** a cancelled check, **When** I run `morning prs`, **Then** it is shown as
+   cancelled, is not a failing check, and does not ask me to fix CI.
 5. **Given** any table output, **When** the terminal is narrow, **Then** cells wrap and
    rows grow taller, and nothing is truncated.
 
@@ -104,7 +114,8 @@ section type, missing `repo`, a secret-looking value.
 - **FR-002**: For each PR, the system MUST show the review decision, CI state, the names
   of failing checks, merge-conflict state and draft state.
 - **FR-003**: The system MUST classify each failing check as "unrelated (fails on base)",
-  "likely flaky", or unclassified, using deterministic rules only.
+  "likely unrelated (fails on other PRs)", "likely flaky", or unclassified, in that order
+  of precedence, using deterministic rules only. Cancelled checks are not failing checks.
 - **FR-004**: The system MUST sort PRs as: changes requested; then failing checks that are
   not classified as unrelated; then the rest. Within each group, the oldest update comes
   first.

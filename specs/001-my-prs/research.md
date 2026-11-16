@@ -112,6 +112,34 @@ Quarkus 3.40.1 BOM, and GitHub's live GraphQL API (read-only queries).
   (`attempts: nodes(ids: $prIds)`, as built). Validated live: cost 4 points for 6 PRs and
   3 base branches. This keeps SC-001 at 3 requests or fewer.
 
+## R11. "Fails on other PRs" and cancelled checks (added after the first live run)
+
+- **Why:** in the live run, 32 of 33 failing checks had no base counterpart (R4). Yet one
+  check, `/substratevm style,fullbuild JDKlatest`, failed on all four of the maintainer's
+  oracle/graal PRs, which made unrelated changes and ran weeks apart. Three other "failures"
+  were `CANCELLED` checks, most likely stopped by fail-fast after another job failed.
+- **Decision (approved 2026-11-16):**
+  - **A.** Compare a failing check with my other open PRs in the same repository and on the
+    same base branch, with a different head commit. One other failure is enough, provided
+    the check passes on no more of them than it fails on. Costs nothing: the data is
+    already in the search response.
+  - **C.** Only when A has nothing to compare with (I have no other open PR there): compare
+    with the 30 most recently updated open PRs by anyone to that base. This needs at least
+    2 failures, and failures ≥ passes. The data comes from an extra `others:
+    nodes(ids: $repoIds)` block in `base-and-attempts.graphql`, with only those repos'
+    IDs, so it adds **no request** (SC-001 unchanged). Live: cost 1 point and 117 KB for
+    quarkusio/quarkus (30 PRs, 1,035 checks).
+  - **B.** `CANCELLED` becomes its own outcome. It is shown, but it is not a failure, does
+    not count as evidence, and does not trigger "fix CI".
+  - **Order:** fails on base, then fails on other PRs, then likely flaky.
+- **Caveats:** stacked PRs that share commits but have different heads can both fail for
+  the same real reason; the label says "likely". Matching check names with the version
+  numbers stripped was rejected, because it would hide version-specific failures.
+- **Live result (2026-11-16):** A marks the oracle/graal check on all four PRs, and three
+  of them leave the CI-failure group. C ran for graalvm-community-jdk21u and
+  Karm/mandrel-integration-tests but found no evidence: no other open PR had run those
+  checks. Still 2 requests.
+
 ## R6. GraphQL client and safety wrapper
 
 - **Decision:** `quarkus-smallrye-graphql-client` (BOM-managed). `DynamicGraphQLClient` is

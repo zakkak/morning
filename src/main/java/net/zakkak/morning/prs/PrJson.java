@@ -27,6 +27,7 @@ final class PrJson {
                 enumOr(ReviewDecision.class, text(n, "reviewDecision"), null),
                 Instant.parse(text(n, "updatedAt")),
                 text(n.path("repository"), "nameWithOwner"),
+                text(n.path("repository"), "id"),
                 text(n, "baseRefName"),
                 text(n.path("baseRef"), "id"),
                 text(n, "headRefOid"),
@@ -78,6 +79,19 @@ final class PrJson {
         }
         byName.remove(null);
         return new CheckAttempts(text(pr, "id"), byName);
+    }
+
+    /** Open PRs of one repository, from the {@code others} block of BaseAndAttempts. */
+    static List<PeerPr> peers(JsonNode repo) {
+        List<PeerPr> peers = new ArrayList<>();
+        for (JsonNode pr : repo.path("pullRequests").path("nodes")) {
+            if (pr.hasNonNull("id")) {
+                peers.add(new PeerPr(text(pr, "id"), pr.path("number").asInt(), text(pr, "baseRefName"),
+                        text(pr, "headRefOid"), checks(pr.path("commits").path("nodes").path(0).path("commit")
+                                .path("statusCheckRollup").path("contexts"))));
+            }
+        }
+        return peers;
     }
 
     static String text(JsonNode node, String field) {

@@ -117,6 +117,6 @@ These summarise the constitution:
   skipped jobs with unexpanded names (`/${{ matrix.env.PRIMARY }} …`), and a PR that
   changes a matrix gets new, version-bearing check names. In a live run on 2026-11-16, 32
   of 33 failing checks had no base counterpart; the one that did had passed on base. So
-  "fails on base" rarely fires.
+  "fails on base" rarely fires; "fails on other PRs" (research R11) catches more.
 - Several `org:` qualifiers in one GitHub search are ORed, `-org:` qualifiers stack, and
   `org:` also matches personal accounts.

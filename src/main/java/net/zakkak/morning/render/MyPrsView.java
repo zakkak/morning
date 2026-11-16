@@ -56,15 +56,21 @@ final class MyPrsView {
     }
 
     private static String ci(PullRequestNode pr) {
-        long failing = pr.checks().stream().filter(c -> c.outcome() == Outcome.FAILURE).count();
-        long pending = pr.checks().stream().filter(c -> c.outcome() == Outcome.PENDING).count();
         if (pr.checks().isEmpty()) {
             return "none";
         }
-        if (failing > 0) {
-            return failing + " failing" + (pending > 0 ? ", " + pending + " pending" : "");
+        List<String> parts = new ArrayList<>();
+        count(pr, Outcome.FAILURE, "failing", parts);
+        count(pr, Outcome.CANCELLED, "cancelled", parts);
+        count(pr, Outcome.PENDING, "pending", parts);
+        return parts.isEmpty() ? "passing" : String.join(", ", parts);
+    }
+
+    private static void count(PullRequestNode pr, Outcome outcome, String label, List<String> parts) {
+        long n = pr.checks().stream().filter(c -> c.outcome() == outcome).count();
+        if (n > 0) {
+            parts.add(n + " " + label);
         }
-        return pending > 0 ? pending + " pending" : "passing";
     }
 
     /** One line per class, at most {@value #NAMES_PER_CLASS} check names each; JSON has them all. */

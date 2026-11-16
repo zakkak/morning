@@ -13,7 +13,7 @@ query MyPrs($q: String!) {
         mergeable
         reviewDecision
         updatedAt
-        repository { nameWithOwner }
+        repository { id nameWithOwner }
         baseRefName
         baseRef { id }
         headRefOid

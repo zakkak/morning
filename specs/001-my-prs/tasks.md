@@ -119,6 +119,16 @@ classifications, `apiRequests <= 3`, token never printed.
 
 ---
 
+## Phase 6: Follow-up after the first live run (research R11, approved 2026-11-16)
+
+- [X] T039 [US1] `CANCELLED` outcome: not a failure, shown in the CI column and as `cancelled` in JSON; `M/prs/Outcome.java`, `M/render/MyPrsView.java`, `M/render/JsonRenderer.java`
+- [X] T040 [US1] Rule A (my other PRs, same repo and base, different head; ≥ 1 failure, failures ≥ passes) and rule C (others' recent open PRs, only when A has no peers; ≥ 2 failures, failures ≥ passes) as `UNRELATED_FAILS_ON_OTHER_PRS`, between "fails on base" and "likely flaky"; `M/prs/FailureClassifier.java`, `M/prs/Peers.java`, `M/prs/PeerPr.java`
+- [X] T041 [US1] `repository { id }` in `my-prs.graphql`; `others: nodes(ids: $repoIds)` in `base-and-attempts.graphql`, with repo IDs only where rule C applies; `M/prs/MyPrsFetcher.java`, `M/prs/PrJson.java`
+- [X] T042 [US1] Unit tests (A, C thresholds, base/head/state filters, precedence, cancelled) and e2e fixtures #8, #9 (US1 scenarios 6–8); `T/prs/*`, `T/cli/PrsCommandTest.java`, `src/test/resources/fixtures/my-prs/`
+- [X] T043 Docs: spec FR-003 and scenarios 6–8, data model, research R11, JSON contract, architecture
+
+---
+
 ## Dependencies
 
 - Phase 1 → Phase 2 → US3 → US1 → Polish.

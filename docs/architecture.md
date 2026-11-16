@@ -65,7 +65,7 @@ Common options:
 | Data | Client | How |
 |---|---|---|
 | My open PRs, reviews, checks | GraphQL | `my-prs.graphql`: `search` (org filters as `org:`/`-org:` qualifiers), `reviewDecision`, the head commit's `statusCheckRollup`. `contexts` are paged with `pr-checks-page.graphql` when there are more than 100 checks. |
-| Base-branch checks and earlier attempts | GraphQL | `base-and-attempts.graphql`, one request, only when some check fails: `nodes(ids: $refIds)` → the last 30 base commits with their checks; `nodes(ids: $prIds)` → `checkSuites { checkRuns(filterBy: {checkType: ALL}) }` on each failing PR's head commit. |
+| Base-branch checks, earlier attempts, other people's PRs | GraphQL | `base-and-attempts.graphql`, one request, only when some check fails: `nodes(ids: $refIds)` → the last 30 base commits with their checks; `nodes(ids: $prIds)` → `checkSuites { checkRuns(filterBy: {checkType: ALL}) }` on each failing PR's head commit; `nodes(ids: $repoIds)` → the 30 most recently updated open PRs, only for repos where I have no other PR on that base (rule C). |
 | Tracking-issue comments and timeline | GraphQL | `tracking-issues.graphql`, one alias per issue: comments plus `timelineItems(itemTypes: [CROSS_REFERENCED_EVENT, CONNECTED_EVENT])` |
 | Linked issue status | GraphQL | `issue-status.graphql`, one alias per issue: `state`, `stateReason`, `assignees`, `closedByPullRequestsReferences` |
 | Workflow YAML at a SHA | GraphQL | `object(expression: "<sha>:<path>") { ... on Blob { text } }` |
@@ -182,8 +182,13 @@ dumps the records.
 2. **Classify** each failing check, first match wins:
    - *unrelated (fails on base)*: the most recent of the last 30 base commits that
      finished a check with the same name failed it;
+   - *likely unrelated (fails on other PRs)*: it also fails on my other open PRs to the
+     same base (at least 1), or, if I have none there, on other people's (at least 2),
+     and fails on at least as many as it passes on;
    - *likely flaky*: an earlier attempt with that name on the head commit passed;
    - otherwise *not analysed* (US2's LLM step will refine this later).
+
+   Cancelled checks are shown, but are not failures (research R11).
 3. **Group and sort**: changes requested, then CI failures not classified as unrelated,
    then the rest; oldest update first within a group. Derive actions.
 4. **Render**: tty (box table, OSC-8 links), md, or json (`morning.my-prs/1`).

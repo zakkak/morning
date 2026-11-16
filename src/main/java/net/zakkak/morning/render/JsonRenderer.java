@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import net.zakkak.morning.prs.CheckFailure;
 import net.zakkak.morning.prs.MyPrsReport;
+import net.zakkak.morning.prs.Outcome;
 import net.zakkak.morning.prs.PullRequestNode;
 import net.zakkak.morning.prs.PullRequestStatus;
 
@@ -51,6 +52,8 @@ public final class JsonRenderer {
                 failures.add(m);
             }
             p.put("failures", failures);
+            p.put("cancelled", pr.checks().stream().filter(c -> c.outcome() == Outcome.CANCELLED)
+                    .map(c -> c.name()).toList());
             p.put("actions", s.actions().stream().map(Enum::name).toList());
             p.put("updatedAt", pr.updatedAt().toString());
             prs.add(p);

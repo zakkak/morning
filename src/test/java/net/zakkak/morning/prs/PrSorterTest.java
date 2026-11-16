@@ -25,20 +25,29 @@ class PrSorterTest {
                 List.of(failure(FailureClass.LIKELY_FLAKY)));
         PullRequestStatus unrelated = PrSorter.analyse(pr(4, "2026-10-01T00:00:00Z", null, Mergeable.MERGEABLE, false),
                 List.of(failure(FailureClass.UNRELATED_FAILS_ON_BASE)));
+        PullRequestStatus elsewhere = PrSorter.analyse(pr(6, "2026-08-01T00:00:00Z", null, Mergeable.MERGEABLE, false),
+                List.of(failure(FailureClass.UNRELATED_FAILS_ON_OTHER_PRS)));
         PullRequestStatus green = PrSorter.analyse(pr(5, "2026-09-01T00:00:00Z", null, Mergeable.MERGEABLE, false),
                 List.of());
 
-        List<PullRequestStatus> sorted = PrSorter.sort(List.of(green, unrelated, ciNew, changes, ciOld));
+        List<PullRequestStatus> sorted = PrSorter.sort(List.of(green, unrelated, ciNew, changes, ciOld, elsewhere));
 
-        assertEquals(List.of(1, 3, 2, 5, 4), sorted.stream().map(s -> s.pr().number()).toList());
+        assertEquals(List.of(1, 3, 2, 6, 5, 4), sorted.stream().map(s -> s.pr().number()).toList());
         assertEquals(List.of(PrGroup.CHANGES_REQUESTED, PrGroup.CI_FAILURE, PrGroup.CI_FAILURE, PrGroup.OTHER,
-                PrGroup.OTHER), sorted.stream().map(PullRequestStatus::group).toList());
+                PrGroup.OTHER, PrGroup.OTHER), sorted.stream().map(PullRequestStatus::group).toList());
     }
 
     @Test
     void changesRequestedWinsOverCiFailure() {
         PullRequestNode p = pr(1, "2026-11-10T00:00:00Z", ReviewDecision.CHANGES_REQUESTED, Mergeable.MERGEABLE, false);
         assertEquals(PrGroup.CHANGES_REQUESTED, PrSorter.group(p, List.of(failure(FailureClass.NOT_ANALYSED))));
+    }
+
+    @Test
+    void cancelledChecksDoNotAskToFixCi() {
+        assertEquals(List.of(Action.AWAITING_REVIEW),
+                PrSorter.actions(pr(7, "2026-11-10T00:00:00Z", ReviewDecision.REVIEW_REQUIRED, Mergeable.MERGEABLE,
+                        false, check("c", Outcome.CANCELLED)), List.of()));
     }
 
     @Test

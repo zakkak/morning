@@ -14,6 +14,7 @@ public record PullRequestNode(
         ReviewDecision reviewDecision,
         Instant updatedAt,
         String repo,
+        String repoId,
         String baseRefName,
         String baseRefId,
         String headRefOid,
@@ -30,7 +31,7 @@ public record PullRequestNode(
         List<CheckContext> all = new java.util.ArrayList<>(checks);
         all.addAll(more);
         return new PullRequestNode(id, number, title, url, isDraft, mergeable, reviewDecision, updatedAt, repo,
-                baseRefName, baseRefId, headRefOid, rollupState, all, hasNextPage, endCursor);
+                repoId, baseRefName, baseRefId, headRefOid, rollupState, all, hasNextPage, endCursor);
     }
 
     public boolean hasFailingCheck() {

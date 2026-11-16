@@ -1,7 +1,7 @@
 {
  "data": {
   "search": {
-   "issueCount": 7,
+   "issueCount": 9,
    "nodes": [
     {
      "id": "PR_1",
@@ -13,7 +13,8 @@
      "reviewDecision": "CHANGES_REQUESTED",
      "updatedAt": "2026-11-10T09:00:00Z",
      "repository": {
-      "nameWithOwner": "example-org/alpha"
+      "nameWithOwner": "example-org/alpha",
+      "id": "REPO_alpha"
      },
      "baseRefName": "main",
      "baseRef": {
@@ -62,7 +63,8 @@
      "reviewDecision": "REVIEW_REQUIRED",
      "updatedAt": "2026-11-01T09:00:00Z",
      "repository": {
-      "nameWithOwner": "example-org/alpha"
+      "nameWithOwner": "example-org/alpha",
+      "id": "REPO_alpha"
      },
      "baseRefName": "main",
      "baseRef": {
@@ -111,7 +113,8 @@
      "reviewDecision": "REVIEW_REQUIRED",
      "updatedAt": "2026-11-09T09:00:00Z",
      "repository": {
-      "nameWithOwner": "example-org/beta"
+      "nameWithOwner": "example-org/beta",
+      "id": "REPO_beta"
      },
      "baseRefName": "main",
      "baseRef": {
@@ -172,7 +175,8 @@
      "reviewDecision": "APPROVED",
      "updatedAt": "2026-11-02T09:00:00Z",
      "repository": {
-      "nameWithOwner": "example-org/beta"
+      "nameWithOwner": "example-org/beta",
+      "id": "REPO_beta"
      },
      "baseRefName": "main",
      "baseRef": {
@@ -221,7 +225,8 @@
      "reviewDecision": "APPROVED",
      "updatedAt": "2026-11-03T09:00:00Z",
      "repository": {
-      "nameWithOwner": "other-org/gamma"
+      "nameWithOwner": "other-org/gamma",
+      "id": "REPO_gamma"
      },
      "baseRefName": "main",
      "baseRef": {
@@ -276,7 +281,8 @@
      "reviewDecision": null,
      "updatedAt": "2026-11-04T09:00:00Z",
      "repository": {
-      "nameWithOwner": "example-org/alpha"
+      "nameWithOwner": "example-org/alpha",
+      "id": "REPO_alpha"
      },
      "baseRefName": "main",
      "baseRef": {
@@ -325,7 +331,8 @@
      "reviewDecision": "REVIEW_REQUIRED",
      "updatedAt": "2026-11-05T09:00:00Z",
      "repository": {
-      "nameWithOwner": "example-org/beta"
+      "nameWithOwner": "example-org/beta",
+      "id": "REPO_beta"
      },
      "baseRefName": "main",
      "baseRef": {
@@ -350,6 +357,118 @@
              "status": "COMPLETED",
              "conclusion": "FAILURE",
              "detailsUrl": "https://github.com/example-org/runs/lint",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "PR_8",
+     "number": 8,
+     "title": "Shares a lint failure with #7",
+     "url": "https://github.com/example-org/beta/pull/8",
+     "isDraft": false,
+     "mergeable": "MERGEABLE",
+     "reviewDecision": "REVIEW_REQUIRED",
+     "updatedAt": "2026-11-06T09:00:00Z",
+     "repository": {
+      "id": "REPO_beta",
+      "nameWithOwner": "example-org/beta"
+     },
+     "baseRefName": "main",
+     "baseRef": {
+      "id": "REF_beta_main"
+     },
+     "headRefOid": "8888888888888888888888888888888888888888",
+     "commits": {
+      "nodes": [
+       {
+        "commit": {
+         "statusCheckRollup": {
+          "state": "FAILURE",
+          "contexts": {
+           "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "C"
+           },
+           "nodes": [
+            {
+             "__typename": "CheckRun",
+             "name": "lint",
+             "status": "COMPLETED",
+             "conclusion": "FAILURE",
+             "detailsUrl": "https://github.com/example-org/runs/lint",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            },
+            {
+             "__typename": "CheckRun",
+             "name": "deploy",
+             "status": "COMPLETED",
+             "conclusion": "CANCELLED",
+             "detailsUrl": "https://github.com/example-org/runs/deploy",
+             "checkSuite": {
+              "app": {
+               "slug": "github-actions"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "PR_9",
+     "number": 9,
+     "title": "My only PR in this repo",
+     "url": "https://github.com/solo-org/delta/pull/9",
+     "isDraft": false,
+     "mergeable": "MERGEABLE",
+     "reviewDecision": "REVIEW_REQUIRED",
+     "updatedAt": "2026-11-07T09:00:00Z",
+     "repository": {
+      "id": "REPO_delta",
+      "nameWithOwner": "solo-org/delta"
+     },
+     "baseRefName": "main",
+     "baseRef": {
+      "id": "REF_delta_main"
+     },
+     "headRefOid": "9999999999999999999999999999999999999999",
+     "commits": {
+      "nodes": [
+       {
+        "commit": {
+         "statusCheckRollup": {
+          "state": "FAILURE",
+          "contexts": {
+           "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "C"
+           },
+           "nodes": [
+            {
+             "__typename": "CheckRun",
+             "name": "e2e",
+             "status": "COMPLETED",
+             "conclusion": "FAILURE",
+             "detailsUrl": "https://github.com/example-org/runs/e2e",
              "checkSuite": {
               "app": {
                "slug": "github-actions"

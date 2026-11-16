@@ -28,7 +28,7 @@ public final class PrSorter {
         if (pr.reviewDecision() == ReviewDecision.CHANGES_REQUESTED) {
             return PrGroup.CHANGES_REQUESTED;
         }
-        if (failures.stream().anyMatch(f -> f.failureClass() != FailureClass.UNRELATED_FAILS_ON_BASE)) {
+        if (failures.stream().anyMatch(f -> !f.failureClass().unrelated())) {
             return PrGroup.CI_FAILURE;
         }
         return PrGroup.OTHER;

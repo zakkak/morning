@@ -208,6 +208,208 @@
       }
      ]
     }
+   },
+   {
+    "id": "PR_8",
+    "commits": {
+     "nodes": [
+      {
+       "commit": {
+        "checkSuites": {
+         "nodes": [
+          {
+           "checkRuns": {
+            "nodes": [
+             {
+              "name": "lint",
+              "status": "COMPLETED",
+              "conclusion": "FAILURE"
+             },
+             {
+              "name": "deploy",
+              "status": "COMPLETED",
+              "conclusion": "CANCELLED"
+             }
+            ]
+           }
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   {
+    "id": "PR_9",
+    "commits": {
+     "nodes": [
+      {
+       "commit": {
+        "checkSuites": {
+         "nodes": [
+          {
+           "checkRuns": {
+            "nodes": [
+             {
+              "name": "e2e",
+              "status": "COMPLETED",
+              "conclusion": "FAILURE"
+             }
+            ]
+           }
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   }
+  ],
+  "others": [
+   {
+    "id": "REPO_delta",
+    "pullRequests": {
+     "nodes": [
+      {
+       "id": "PR_9",
+       "number": 9,
+       "baseRefName": "main",
+       "headRefOid": "9999999999999999999999999999999999999999",
+       "commits": {
+        "nodes": [
+         {
+          "commit": {
+           "statusCheckRollup": {
+            "contexts": {
+             "nodes": [
+              {
+               "__typename": "CheckRun",
+               "name": "e2e",
+               "status": "COMPLETED",
+               "conclusion": "FAILURE"
+              }
+             ]
+            }
+           }
+          }
+         }
+        ]
+       }
+      },
+      {
+       "id": "PEER_100",
+       "number": 100,
+       "baseRefName": "main",
+       "headRefOid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "commits": {
+        "nodes": [
+         {
+          "commit": {
+           "statusCheckRollup": {
+            "contexts": {
+             "nodes": [
+              {
+               "__typename": "CheckRun",
+               "name": "e2e",
+               "status": "COMPLETED",
+               "conclusion": "FAILURE"
+              }
+             ]
+            }
+           }
+          }
+         }
+        ]
+       }
+      },
+      {
+       "id": "PEER_101",
+       "number": 101,
+       "baseRefName": "main",
+       "headRefOid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "commits": {
+        "nodes": [
+         {
+          "commit": {
+           "statusCheckRollup": {
+            "contexts": {
+             "nodes": [
+              {
+               "__typename": "CheckRun",
+               "name": "e2e",
+               "status": "COMPLETED",
+               "conclusion": "FAILURE"
+              }
+             ]
+            }
+           }
+          }
+         }
+        ]
+       }
+      },
+      {
+       "id": "PEER_102",
+       "number": 102,
+       "baseRefName": "main",
+       "headRefOid": "cccccccccccccccccccccccccccccccccccccccc",
+       "commits": {
+        "nodes": [
+         {
+          "commit": {
+           "statusCheckRollup": {
+            "contexts": {
+             "nodes": [
+              {
+               "__typename": "CheckRun",
+               "name": "e2e",
+               "status": "COMPLETED",
+               "conclusion": "SUCCESS"
+              }
+             ]
+            }
+           }
+          }
+         }
+        ]
+       }
+      },
+      {
+       "id": "PEER_103",
+       "number": 103,
+       "baseRefName": "release",
+       "headRefOid": "dddddddddddddddddddddddddddddddddddddddd",
+       "commits": {
+        "nodes": [
+         {
+          "commit": {
+           "statusCheckRollup": {
+            "contexts": {
+             "nodes": [
+              {
+               "__typename": "CheckRun",
+               "name": "e2e",
+               "status": "COMPLETED",
+               "conclusion": "SUCCESS"
+              },
+              {
+               "__typename": "CheckRun",
+               "name": "e2e",
+               "status": "COMPLETED",
+               "conclusion": "SUCCESS"
+              }
+             ]
+            }
+           }
+          }
+         }
+        ]
+       }
+      }
+     ]
+    }
    }
   ]
  }
