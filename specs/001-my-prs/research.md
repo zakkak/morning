@@ -91,9 +91,10 @@ Quarkus 3.40.1 BOM, and GitHub's live GraphQL API (read-only queries).
   a later page.
 - **Rationale:** this widens the rule's coverage from about 6% of PRs to most of them, at
   a cost of one request.
-- **Live result (2026-11-16):** none of the 33 failing checks on the maintainer's 6 failing
-  PRs had a same-named check in the base history (oracle/graal `master` ran only 3 check
-  names in 30 commits). The rule never misfires, but rarely fires; US2 covers the rest.
+- **Live result (2026-11-16):** 32 of the 33 failing checks on the maintainer's 6 failing
+  PRs had no same-named check in the base history. The one that did
+  (`/vm build,sulong JDK21` on graalvm-community-jdk21u) had passed on base, so it was
+  correctly left as "not analysed". The rule never misfired, but it rarely fires.
 - **Caveat:** check names sometimes differ between push and pull_request workflows. A
   missing name falls back to "not analysed", never to a wrong "unrelated".
 - **Spec impact:** FR-003 and acceptance scenario 2 say "base branch's latest commit". The

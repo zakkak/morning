@@ -113,8 +113,10 @@ These summarise the constitution:
   classes `*Test` so `./mvnw verify` runs them. The JUnit artifact is `quarkus-junit`.
 - Surefire sets `GITHUB_TOKEN` to a sentinel, so tests can never use a real token and
   SC-003 tests can look for it in all output.
-- Base branches often don't run the same checks as PRs (oracle/graal `master` ran 3 check
-  names in 30 commits). In a live run on 2026-11-16, none of 33 failing checks had a base
-  counterpart, so "fails on base" rarely fires; that is what US2's LLM step is for.
+- Base branches often don't run the same checks as PRs. oracle/graal `master` only shows
+  skipped jobs with unexpanded names (`/${{ matrix.env.PRIMARY }} …`), and a PR that
+  changes a matrix gets new, version-bearing check names. In a live run on 2026-11-16, 32
+  of 33 failing checks had no base counterpart; the one that did had passed on base. So
+  "fails on base" rarely fires.
 - Several `org:` qualifiers in one GitHub search are ORed, `-org:` qualifiers stack, and
   `org:` also matches personal accounts.
