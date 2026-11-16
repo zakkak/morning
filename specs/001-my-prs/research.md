@@ -132,11 +132,28 @@ Quarkus 3.40.1 BOM, and GitHub's live GraphQL API (read-only queries).
   - **B.** `CANCELLED` becomes its own outcome. It is shown, but it is not a failure, does
     not count as evidence, and does not trigger "fix CI".
   - **Order:** fails on base, then fails on other PRs, then likely flaky.
+  - **Refinements (approved 2026-11-16, after reviewing the thresholds):**
+    - *Recency window:* only peer results produced within **14 days** of my failing result
+      count, for both A and C. Without it, a failure from before a since-fixed base
+      breakage could clear a failure that really is mine. This is the one way the rule can
+      hide my own failure. Times come from `CheckRun.completedAt` and
+      `StatusContext.createdAt`, added to the existing fragments, so no extra request.
+    - *No ties for C:* others' PRs need strictly more failures than passes (2–2 is not
+      evidence). A keeps "failures ≥ passes", because the peers are my own PRs and I can
+      judge them.
+  - **Threshold check on live data:** among quarkusio/quarkus's 29 open PRs to `main`, 6
+    checks failed anywhere, and each passed on more PRs than it failed on (for example
+    `JVM Tests - JDK 21 Windows`, 2 failures and 14 passes). So C marks nothing there: the
+    rule is conservative by design. Aggregate checks such as `CI Merge Gate` (7 failures,
+    11 passes) can only be cleared when most PRs fail; their underlying jobs are still
+    classified one by one.
 - **Caveats:** stacked PRs that share commits but have different heads can both fail for
   the same real reason; the label says "likely". Matching check names with the version
   numbers stripped was rejected, because it would hide version-specific failures.
 - **Live result (2026-11-16):** A marks the oracle/graal check on all four PRs, and three
-  of them leave the CI-failure group. C ran for graalvm-community-jdk21u and
+  of them leave the CI-failure group. With the 14-day window it marks three of them:
+  #14723's failure (2026-10-19) has no other result within 14 days, so it is "not
+  analysed" again. #14954, #14893 and #14876 failed between 11-03 and 11-09. C ran for graalvm-community-jdk21u and
   Karm/mandrel-integration-tests but found no evidence: no other open PR had run those
   checks. Still 2 requests.
 

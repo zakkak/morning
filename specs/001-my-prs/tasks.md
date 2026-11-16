@@ -126,6 +126,7 @@ classifications, `apiRequests <= 3`, token never printed.
 - [X] T041 [US1] `repository { id }` in `my-prs.graphql`; `others: nodes(ids: $repoIds)` in `base-and-attempts.graphql`, with repo IDs only where rule C applies; `M/prs/MyPrsFetcher.java`, `M/prs/PrJson.java`
 - [X] T042 [US1] Unit tests (A, C thresholds, base/head/state filters, precedence, cancelled) and e2e fixtures #8, #9 (US1 scenarios 6–8); `T/prs/*`, `T/cli/PrsCommandTest.java`, `src/test/resources/fixtures/my-prs/`
 - [X] T043 Docs: spec FR-003 and scenarios 6–8, data model, research R11, JSON contract, architecture
+- [X] T044 [US1] 14-day recency window for peer results (A and C) and no ties for C: `completedAt`/`createdAt` in the check fragments, `CheckContext.at`, `Peers.enough`/`withinWindow`; unit tests and fixture #104 (research R11, refinements)
 
 ---
 

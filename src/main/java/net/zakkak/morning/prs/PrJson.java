@@ -52,9 +52,9 @@ final class PrJson {
         return switch (text(c, "__typename") == null ? "" : text(c, "__typename")) {
             case "CheckRun" -> new CheckContext(text(c, "name"), CheckContext.Kind.CHECK_RUN,
                     Outcome.ofCheckRun(text(c, "status"), text(c, "conclusion")), text(c, "detailsUrl"),
-                    text(c.path("checkSuite").path("app"), "slug"));
+                    text(c.path("checkSuite").path("app"), "slug"), instant(c, "completedAt"));
             case "StatusContext" -> new CheckContext(text(c, "context"), CheckContext.Kind.STATUS_CONTEXT,
-                    Outcome.ofStatus(text(c, "state")), text(c, "targetUrl"), null);
+                    Outcome.ofStatus(text(c, "state")), text(c, "targetUrl"), null, instant(c, "createdAt"));
             default -> null;
         };
     }
@@ -92,6 +92,11 @@ final class PrJson {
             }
         }
         return peers;
+    }
+
+    private static Instant instant(JsonNode node, String field) {
+        String v = text(node, field);
+        return v == null ? null : Instant.parse(v);
     }
 
     static String text(JsonNode node, String field) {

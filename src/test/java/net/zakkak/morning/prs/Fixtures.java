@@ -8,8 +8,15 @@ final class Fixtures {
     private Fixtures() {
     }
 
+    /** Default result time for checks in unit tests. */
+    static final Instant AT = Instant.parse("2026-11-10T00:00:00Z");
+
     static CheckContext check(String name, Outcome outcome) {
-        return new CheckContext(name, CheckContext.Kind.CHECK_RUN, outcome, null, "github-actions");
+        return check(name, outcome, AT);
+    }
+
+    static CheckContext check(String name, Outcome outcome, Instant at) {
+        return new CheckContext(name, CheckContext.Kind.CHECK_RUN, outcome, null, "github-actions", at);
     }
 
     static PullRequestNode pr(int number, String updatedAt, ReviewDecision review, Mergeable mergeable, boolean draft,

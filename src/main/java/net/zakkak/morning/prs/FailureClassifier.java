@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
  * <li>{@link FailureClass#UNRELATED_FAILS_ON_BASE}: the most recent base commit (of the last 30)
  * that ran a check with the same name and finished it (success or failure) failed it.</li>
  * <li>{@link FailureClass#UNRELATED_FAILS_ON_OTHER_PRS}: among other open PRs to the same base
- * with a different head commit, the check failed on at least {@link Peers#minFailures()} and on
- * at least as many as it passed on. Peers are my own PRs (rule A) or, when I have none there,
- * other people's (rule C).</li>
+ * with a different head commit, counting only results produced within {@link Peers#WINDOW} of
+ * mine, the check failed often enough ({@link Peers#enough}). Peers are my own PRs (rule A) or,
+ * when I have none there, other people's (rule C).</li>
  * <li>{@link FailureClass#LIKELY_FLAKY}: an earlier attempt with the same name on the PR's head
  * commit succeeded.</li>
  * <li>otherwise {@link FailureClass#NOT_ANALYSED}.</li>
@@ -58,7 +58,7 @@ public final class FailureClassifier {
                     "failed on base " + c.oid().substring(0, Math.min(7, c.oid().length())) + " ("
                             + DAY.format(c.committedDate()) + ")");
         }
-        String onPeers = failsOnPeers(check.name(), peers);
+        String onPeers = failsOnPeers(check, peers);
         if (onPeers != null) {
             return new CheckFailure(check, FailureClass.UNRELATED_FAILS_ON_OTHER_PRS, onPeers);
         }
@@ -70,18 +70,20 @@ public final class FailureClassifier {
     }
 
     /** @return the evidence when the rule applies, else null */
-    private static String failsOnPeers(String name, Peers peers) {
+    private static String failsOnPeers(CheckContext check, Peers peers) {
         List<PeerPr> failed = new ArrayList<>();
         int passed = 0;
         for (PeerPr p : peers.prs()) {
-            Outcome o = outcomeOf(name, p.checks());
+            List<CheckContext> recent = p.checks().stream()
+                    .filter(c -> Peers.withinWindow(check.at(), c.at())).toList();
+            Outcome o = outcomeOf(check.name(), recent);
             if (o == Outcome.FAILURE) {
                 failed.add(p);
             } else if (o == Outcome.SUCCESS) {
                 passed++;
             }
         }
-        if (failed.size() < peers.minFailures() || failed.size() < passed) {
+        if (!peers.enough(failed.size(), passed)) {
             return null;
         }
         String numbers = failed.stream().limit(LISTED).map(p -> "#" + p.number()).collect(Collectors.joining(", "))

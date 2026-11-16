@@ -4,6 +4,7 @@ import static net.zakkak.morning.prs.Fixtures.check;
 import static net.zakkak.morning.prs.Fixtures.commit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -137,6 +138,40 @@ class FailureClassifierTest {
                 Fixtures.peer(5, "main", check("other", Outcome.FAILURE)));
         assertEquals(FailureClass.UNRELATED_FAILS_ON_OTHER_PRS, f.failureClass());
         assertEquals("also fails on 2 of 3 other open PRs that ran it (#2, #3)", f.evidence());
+    }
+
+    @Test
+    void ruleC_tieIsNotEnough() {
+        assertEquals(FailureClass.NOT_ANALYSED, withPeers(false,
+                Fixtures.peer(2, "main", check("build", Outcome.FAILURE)),
+                Fixtures.peer(3, "main", check("build", Outcome.FAILURE)),
+                Fixtures.peer(4, "main", check("build", Outcome.SUCCESS)),
+                Fixtures.peer(5, "main", check("build", Outcome.SUCCESS))).failureClass());
+    }
+
+    @Test
+    void ruleA_tieIsEnough() {
+        assertEquals(FailureClass.UNRELATED_FAILS_ON_OTHER_PRS, withPeers(true,
+                Fixtures.peer(2, "main", check("build", Outcome.FAILURE)),
+                Fixtures.peer(3, "main", check("build", Outcome.SUCCESS))).failureClass());
+    }
+
+    @Test
+    void peerResultsOutsideTheWindowDoNotCount() {
+        Instant old = Fixtures.AT.minus(Peers.WINDOW).minusSeconds(1);
+        Instant edge = Fixtures.AT.minus(Peers.WINDOW);
+        assertEquals(FailureClass.NOT_ANALYSED,
+                withPeers(true, Fixtures.peer(2, "main", check("build", Outcome.FAILURE, old))).failureClass());
+        assertEquals(FailureClass.UNRELATED_FAILS_ON_OTHER_PRS,
+                withPeers(true, Fixtures.peer(2, "main", check("build", Outcome.FAILURE, edge))).failureClass());
+        assertEquals(FailureClass.NOT_ANALYSED,
+                withPeers(true, Fixtures.peer(2, "main", check("build", Outcome.FAILURE, null))).failureClass());
+        // A stale pass is ignored too: here it would otherwise turn 2-1 into a 2-2 tie.
+        assertEquals(FailureClass.UNRELATED_FAILS_ON_OTHER_PRS, withPeers(false,
+                Fixtures.peer(2, "main", check("build", Outcome.FAILURE)),
+                Fixtures.peer(3, "main", check("build", Outcome.FAILURE)),
+                Fixtures.peer(4, "main", check("build", Outcome.SUCCESS)),
+                Fixtures.peer(5, "main", check("build", Outcome.SUCCESS, old))).failureClass());
     }
 
     @Test

@@ -41,12 +41,14 @@ fragment CheckFields on StatusCheckRollupContext {
     name
     status
     conclusion
+    completedAt
     detailsUrl
     checkSuite { app { slug } }
   }
   ... on StatusContext {
     context
     state
+    createdAt
     targetUrl
   }
 }

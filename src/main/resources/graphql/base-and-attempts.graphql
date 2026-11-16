@@ -77,9 +77,11 @@ fragment CheckFields on StatusCheckRollupContext {
     name
     status
     conclusion
+    completedAt
   }
   ... on StatusContext {
     context
     state
+    createdAt
   }
 }

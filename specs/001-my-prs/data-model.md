@@ -50,7 +50,8 @@ PullRequestNode(id, number, title, url, isDraft, mergeable: Mergeable,
 
 CheckContext(name, kind: CHECK_RUN | STATUS_CONTEXT,
              outcome: SUCCESS | FAILURE | CANCELLED | PENDING | NEUTRAL | SKIPPED,
-             url: String?, app: String?)
+             url: String?, app: String?,
+             at: Instant?)            # CheckRun.completedAt or StatusContext.createdAt
   # CheckRun.conclusion: FAILURE, TIMED_OUT, STARTUP_FAILURE, ACTION_REQUIRED → FAILURE
   # CheckRun.conclusion: CANCELLED → CANCELLED (usually fail-fast or superseded; not a failure)
   # StatusContext.state: FAILURE, ERROR → FAILURE
@@ -63,8 +64,11 @@ CheckAttempts(prId, attemptsByName: Map<String, List<Outcome>>) # all attempts o
 
 PeerPr(id, number, baseRefName, headRefOid, checks: List<CheckContext>)  # another open PR
 Peers(prs: List<PeerPr>, mine: boolean)
-  # mine = true: my other open PRs in the same repo and base (rule A); needs ≥ 1 failure
-  # mine = false: others' recent open PRs, when I have none there (rule C); needs ≥ 2
+  # mine = true: my other open PRs in the same repo and base (rule A);
+  #   needs ≥ 1 failure and failures ≥ passes
+  # mine = false: others' recent open PRs, when I have none there (rule C);
+  #   needs ≥ 2 failures and failures > passes
+  # only peer results within 14 days (either way) of my failing result count
 ```
 
 `Mergeable` is MERGEABLE, CONFLICTING or UNKNOWN. `ReviewDecision` is APPROVED,
@@ -76,7 +80,7 @@ CHANGES_REQUESTED, REVIEW_REQUIRED, or null when there is no review policy.
 FailureClass = UNRELATED_FAILS_ON_BASE | UNRELATED_FAILS_ON_OTHER_PRS | LIKELY_FLAKY | NOT_ANALYSED
   # rules apply in this order; the first match wins
   # UNRELATED_FAILS_ON_OTHER_PRS: among peers on the same base with a different head SHA,
-  #   failures ≥ the minimum and failures ≥ passes (pending/cancelled/skipped don't count)
+  #   enough failures per Peers (pending/cancelled/skipped and out-of-window results don't count)
 
 CheckFailure(check: CheckContext, failureClass: FailureClass,
              evidence: String?)     # e.g. "failed on base 1a2b3c4 (2026-11-12)"

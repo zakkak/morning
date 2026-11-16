@@ -182,9 +182,10 @@ dumps the records.
 2. **Classify** each failing check, first match wins:
    - *unrelated (fails on base)*: the most recent of the last 30 base commits that
      finished a check with the same name failed it;
-   - *likely unrelated (fails on other PRs)*: it also fails on my other open PRs to the
-     same base (at least 1), or, if I have none there, on other people's (at least 2),
-     and fails on at least as many as it passes on;
+   - *likely unrelated (fails on other PRs)*: counting only results within 14 days of
+     mine, it also fails on my other open PRs to the same base (at least 1, failures ≥
+     passes), or, if I have none there, on other people's (at least 2, failures >
+     passes);
    - *likely flaky*: an earlier attempt with that name on the head commit passed;
    - otherwise *not analysed* (US2's LLM step will refine this later).
 

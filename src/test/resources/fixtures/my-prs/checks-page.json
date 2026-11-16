@@ -16,7 +16,8 @@
            "__typename": "StatusContext",
            "context": "ci/page-two",
            "state": "ERROR",
-           "targetUrl": "https://ci.example.com/ci/page-two"
+           "targetUrl": "https://ci.example.com/ci/page-two",
+           "createdAt": "2026-11-10T00:00:00Z"
           }
          ]
         }

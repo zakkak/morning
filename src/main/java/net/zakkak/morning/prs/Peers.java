@@ -1,5 +1,7 @@
 package net.zakkak.morning.prs;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -14,8 +16,21 @@ public record Peers(List<PeerPr> prs, boolean mine) {
         prs = List.copyOf(prs);
     }
 
-    /** Failures needed on peers: one of my own PRs, or two of other people's. */
-    int minFailures() {
-        return mine ? 1 : 2;
+    /**
+     * Peer results count only if produced within this long of my failing result, so a failure
+     * from before a since-fixed base breakage cannot clear mine (research R11).
+     */
+    static final Duration WINDOW = Duration.ofDays(14);
+
+    /**
+     * Mine (rule A): at least 1 failure and failures &gt;= passes. Others' (rule C): at least 2
+     * failures and strictly more failures than passes.
+     */
+    boolean enough(int failures, int passes) {
+        return mine ? failures >= 1 && failures >= passes : failures >= 2 && failures > passes;
+    }
+
+    static boolean withinWindow(Instant mine, Instant peer) {
+        return mine != null && peer != null && Duration.between(peer, mine).abs().compareTo(WINDOW) <= 0;
     }
 }

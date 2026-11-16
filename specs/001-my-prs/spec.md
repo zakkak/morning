@@ -43,12 +43,13 @@ a PR with failing CI, a green PR and a draft. Check the rows and their order.
 4. **Given** a failing check whose earlier attempt on the same commit passed, **When** I
    run `morning prs`, **Then** it is marked "likely flaky".
 6. **Given** a failing check that also fails on another of my open PRs to the same
-   repository and base branch, and passes on no more of them than it fails on, **When**
-   I run `morning prs`, **Then** it is marked "likely unrelated (fails on other PRs)",
+   repository and base branch, and passes on no more of them than it fails on, counting
+   only results within 14 days of mine, **When** I run `morning prs`, **Then** it is marked "likely unrelated (fails on other PRs)",
    naming those PRs, and does not put the PR in the CI-failure group.
 7. **Given** a failing check on my only open PR to that repository and base branch, where
    it also fails on at least 2 of the 30 most recently updated open PRs by others to the
-   same base, and passes on no more than it fails on, **When** I run `morning prs`,
+   same base, and on strictly more of them than it passes on, counting only results
+   within 14 days of mine, **When** I run `morning prs`,
    **Then** it is marked the same way, with the counts.
 8. **Given** a cancelled check, **When** I run `morning prs`, **Then** it is shown as
    cancelled, is not a failing check, and does not ask me to fix CI.

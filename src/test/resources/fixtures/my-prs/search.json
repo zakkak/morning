@@ -43,7 +43,8 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             }
            ]
           }
@@ -93,7 +94,8 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             }
            ]
           }
@@ -143,7 +145,8 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             },
             {
              "__typename": "CheckRun",
@@ -155,7 +158,8 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             }
            ]
           }
@@ -205,7 +209,8 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             }
            ]
           }
@@ -255,13 +260,15 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             },
             {
              "__typename": "StatusContext",
              "context": "ci/external",
              "state": "SUCCESS",
-             "targetUrl": "https://ci.example.com/ci/external"
+             "targetUrl": "https://ci.example.com/ci/external",
+             "createdAt": "2026-11-10T00:00:00Z"
             }
            ]
           }
@@ -361,7 +368,8 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             }
            ]
           }
@@ -411,7 +419,8 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             },
             {
              "__typename": "CheckRun",
@@ -423,7 +432,8 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             }
            ]
           }
@@ -473,7 +483,8 @@
               "app": {
                "slug": "github-actions"
               }
-             }
+             },
+             "completedAt": "2026-11-10T00:00:00Z"
             }
            ]
           }
