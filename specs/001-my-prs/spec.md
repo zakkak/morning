@@ -12,9 +12,9 @@ with a review requesting changes, 2. PRs with CI failures I should take care of 
 3. the rest." (from the original `morning` skill)
 
 > First feature. Its plan also sets up the project skeleton: Maven, Quarkus and Picocli;
-> credentials; YAML configuration with typed sections (ADR-0008); both GitHub clients with
-> their read-only wrappers; the table renderer; the cache directory; and the ArchUnit and
-> GraphQL schema tests. See `docs/architecture.md`.
+> credentials; YAML configuration with typed sections (ADR-0008); the read-only GraphQL
+> client; the table renderer; and the ArchUnit and GraphQL schema tests. hub4j, the cache
+> and the LLM boundary arrive with feature 002 (research R1). See `docs/architecture.md`.
 
 ## User Scenarios & Testing *(mandatory)*
 

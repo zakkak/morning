@@ -39,6 +39,10 @@ awkward even for its author when interests change.
   - Errors carry the field path (for example `morning.sections[1].repo`).
   - The user's routine is kept separate from the app's own `application.properties`.
   - Default location: `~/.config/morning/config.yaml`; `--config <path>` overrides it.
+    `--config` is a plain Picocli option and the file is read by our own loader, not by
+    SmallRye Config. This is what Quarkus's own CLI does: `RegistryClientMixin` declares
+    `--config`, and `RegistriesConfigMapperHelper` reads `~/.quarkus/config.yaml` with
+    Jackson YAML.
   - With no config, the CLI exits with an error pointing to `examples/`. There are no
     built-in default repositories.
   - The maintainer's routine ships as `examples/zakkak.yaml`.
@@ -64,6 +68,13 @@ awkward even for its author when interests change.
     differently-typed sections would need one superset group plus hand-written per-type
     validation.
   - Quarkus resolves config at startup, before Picocli parses `--config`.
+- **`quarkus.config.locations`** (SmallRye extra config sources). Rejected: it must be
+  set as a system property or environment variable before startup, so `--config` would
+  need a pre-parsing `main`, and it still maps through `@ConfigMapping` (no polymorphism).
+- **Picocli `@file` argument files or `PropertiesDefaultProvider`.** Rejected as the
+  routine format: both are flat lists of options and can't express typed, nested
+  sections. `@file` stays available (Picocli enables it by default) for saving common
+  flags such as `--width`.
 - **A custom config parser or file format.** Rejected: Jackson and Bean Validation
   already provide typed, validated YAML.
 
