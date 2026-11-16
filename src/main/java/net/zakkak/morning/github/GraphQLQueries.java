@@ -36,12 +36,12 @@ public final class GraphQLQueries implements AutoCloseable {
             response = client.executeSync(query.document(), variables, query.operationName());
         } catch (ExecutionException e) {
             Throwable cause = e.getCause() == null ? e : e.getCause();
-            throw new GitHubException("GitHub request " + query.operationName() + " failed: " + cause.getMessage(), cause);
+            throw new GitHubException("GitHub request " + query.operationName() + " failed: " + brief(cause), cause);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new GitHubException("GitHub request " + query.operationName() + " was interrupted", e);
         } catch (RuntimeException e) {
-            throw new GitHubException("GitHub request " + query.operationName() + " failed: " + e.getMessage(), e);
+            throw new GitHubException("GitHub request " + query.operationName() + " failed: " + brief(e), e);
         }
         if (response.hasError()) {
             String messages = response.getErrors().stream().map(GraphQLError::getMessage)
@@ -56,6 +56,17 @@ public final class GraphQLQueries implements AutoCloseable {
         } catch (JsonProcessingException e) {
             throw new GitHubException("GitHub response " + query.operationName() + " is not valid JSON", e);
         }
+    }
+
+    /** The status line of an HTTP error, without the response body; a hint for auth failures. */
+    static String brief(Throwable e) {
+        String m = String.valueOf(e.getMessage());
+        int body = m.indexOf(", body=");
+        String line = (body >= 0 ? m.substring(0, body) : m).lines().findFirst().orElse("").strip();
+        if (line.contains("Code=401")) {
+            return line + " (check the GitHub token)";
+        }
+        return line;
     }
 
     /** Requests made so far through this instance. */

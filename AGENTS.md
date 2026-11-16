@@ -59,14 +59,15 @@ Skill names below are agent-neutral. Invoke them with your agent's syntax (see a
 
 ## Commands
 
-The project is not scaffolded yet; the 001 plan creates it. Expected commands:
-
 ```bash
 ./mvnw verify                        # build + all tests (no network)
-./mvnw verify -Dmorning.live=true    # also opt-in live tests (real GitHub/LLM)
+./mvnw package -DskipTests           # just the jar
+java -jar target/quarkus-app/quarkus-run.jar --config examples/zakkak.yaml prs
 ./mvnw quarkus:dev -Dquarkus.args="prs --no-llm"
-java -jar target/quarkus-app/quarkus-run.jar prs
 ```
+
+Opt-in live tests (`-Dmorning.live=true`) are reserved by the constitution; none exist yet.
+For live checks, run the jar (read-only) as in `specs/001-my-prs/quickstart.md`.
 
 ## Conventions
 
@@ -104,3 +105,16 @@ These summarise the constitution:
 - `specify integration switch` (specify-cli 1.4.0) drops the execute bit from
   `.specify/scripts/bash/*.sh`, even though it reports setting it. Restore it with
   `chmod +x`.
+- `@QuarkusMainTest` does not inject test resources (for example `@ConnectWireMock`),
+  and a `QuarkusTestResourceLifecycleManager`'s statics live in a different class loader
+  from the test's. Start WireMock in the test and pass its URL as a system property,
+  which every launch reads (see `PrsCommandTest`).
+- The generated pom skips `*IT` classes (`skipITs=true`, failsafe). Name `@QuarkusMainTest`
+  classes `*Test` so `./mvnw verify` runs them. The JUnit artifact is `quarkus-junit`.
+- Surefire sets `GITHUB_TOKEN` to a sentinel, so tests can never use a real token and
+  SC-003 tests can look for it in all output.
+- Base branches often don't run the same checks as PRs (oracle/graal `master` ran 3 check
+  names in 30 commits). In a live run on 2026-11-16, none of 33 failing checks had a base
+  counterpart, so "fails on base" rarely fires; that is what US2's LLM step is for.
+- Several `org:` qualifiers in one GitHub search are ORed, `-org:` qualifiers stack, and
+  `org:` also matches personal accounts.

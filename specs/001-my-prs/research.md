@@ -51,7 +51,9 @@ Quarkus 3.40.1 BOM, and GitHub's live GraphQL API (read-only queries).
   - head commit `statusCheckRollup { state contexts(first: 100) { totalCount pageInfo nodes {
     ... on CheckRun {...} ... on StatusContext {...} } } }`.
   - Org filters are applied as `org:`/`-org:` qualifiers inside the search query. GitHub
-    filters server-side, so no extra requests are needed.
+    filters server-side, so no extra requests are needed. Checked live during
+    implementation: several `org:` are ORed, `-org:` stack, and `org:` also matches
+    personal accounts.
 - **Evidence:** on the maintainer's account (17 open PRs) the query cost **2 points** and
   returned one page. The largest check list was 72 contexts, under 100.
 - **Follow-up paging:** `pr-checks-page.graphql` (by PR node ID, `contexts(after:)`), only
@@ -82,8 +84,16 @@ Quarkus 3.40.1 BOM, and GitHub's live GraphQL API (read-only queries).
     check with the **same name**. If that check failed, mark the PR's failure
     *unrelated (fails on base)*.
   - If no base commit in the last 30 has that check, the result is "not analysed".
+- **As built:** instead of one alias per (repo, base branch), the document is static and
+  takes the base branches' Ref node IDs (from `baseRef { id }` in the search) as a
+  variable: `bases: nodes(ids: $refIds)`. No query text is generated at runtime, which keeps
+  Principle III simple. Paging runs *before* this query, because a failing check can be on
+  a later page.
 - **Rationale:** this widens the rule's coverage from about 6% of PRs to most of them, at
   a cost of one request.
+- **Live result (2026-11-16):** none of the 33 failing checks on the maintainer's 6 failing
+  PRs had a same-named check in the base history (oracle/graal `master` ran only 3 check
+  names in 30 commits). The rule never misfires, but rarely fires; US2 covers the rest.
 - **Caveat:** check names sometimes differ between push and pull_request workflows. A
   missing name falls back to "not analysed", never to a wrong "unrelated".
 - **Spec impact:** FR-003 and acceptance scenario 2 say "base branch's latest commit". The
@@ -97,9 +107,9 @@ Quarkus 3.40.1 BOM, and GitHub's live GraphQL API (read-only queries).
   `checkSuites { nodes { checkRuns(filterBy: {checkType: ALL}, first: 100) { nodes { name conclusion } } } }`.
   A failing check is *likely flaky* if an earlier run with the same name on the same SHA
   succeeded.
-- **Budget:** base history and attempts always travel in one aliased request. The merged
-  query was validated live: cost 1 point, and it returned earlier attempts. This keeps
-  SC-001 at 3 requests or fewer.
+- **Budget:** base history and attempts always travel in one request
+  (`attempts: nodes(ids: $prIds)`, as built). Validated live: cost 4 points for 6 PRs and
+  3 base branches. This keeps SC-001 at 3 requests or fewer.
 
 ## R6. GraphQL client and safety wrapper
 
@@ -135,13 +145,19 @@ Quarkus 3.40.1 BOM, and GitHub's live GraphQL API (read-only queries).
 | Tool | Version | Use |
 |---|---|---|
 | `quarkus-junit5` | BOM | `@QuarkusTest`, `@QuarkusMainTest` for CLI end-to-end tests |
-| `io.quarkiverse.wiremock:quarkus-wiremock-test` | **1.8.1** (built against Quarkus 3.40.1, WireMock 3.13.2; repo active 2026-11-13) | Dev Services WireMock; GraphQL stubs matched on `operationName` |
+| `org.wiremock:wiremock-standalone` | **3.13.2** (latest stable; 4.0 is in beta, project active 2026-11-13) | Local stand-in for GitHub; GraphQL stubs matched on `operationName` |
 | `com.tngtech.archunit:archunit-junit5` | **1.5.1** (2026-09-25) | Read-only boundary rules |
 | `graphql-java` | BOM 25.0, test scope | Schema validation of `.graphql` documents |
 
-Recorded fixtures: response JSON is captured once from the live API and **sanitised**
-(owner logins and titles kept, node IDs kept, nothing secret), then stored under
-`src/test/resources/fixtures/my-prs/`.
+**As built:**
+
+- `quarkus-wiremock-test` was dropped. `@QuarkusMainTest` does not inject its
+  `@ConnectWireMock` client, so `PrsCommandTest` starts WireMock itself and passes the URL
+  as a system property.
+- Fixtures are **hand-written in the recorded shape** rather than sanitised recordings.
+  The shape was captured from the live API, but real data doesn't cover every scenario
+  (for example, no live failure fails on base). They live under
+  `src/test/resources/fixtures/my-prs/`, with a scenario table in its README.
 
 ## R9. Terminal width and links
 

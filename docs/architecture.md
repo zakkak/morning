@@ -1,7 +1,8 @@
 # Architecture
 
-> **Status: target design. Nothing is implemented yet.** Each feature updates this file
-> when it lands, so the "Implemented" column below always reflects the code. Reasons for
+> **Status: target design, partly implemented.** Feature 001 (US1, US3) is implemented:
+> see the "Implemented" column. Each feature updates this file when it lands, so the
+> column always reflects the code. Reasons for
 > decisions live in [ADRs](adr/). Binding rules live in the
 > [constitution](../.specify/memory/constitution.md).
 
@@ -24,16 +25,16 @@ other sections, so it does not fetch again.
 
 | Component | Responsibility | ADR | Implemented |
 |---|---|---|---|
-| Picocli commands | `all`, `ci`, `prs`, `reviews`, `summary`; common options | 0002 | no |
-| `MorningConfig` | Jackson YAML into records, polymorphic on `type`, with Bean Validation and a secret-value check; validates before any API call | 0008 | no |
-| `GitHubCredentials` | Token from `GITHUB_TOKEN`, then `GH_TOKEN`, then `gh auth token`; injected only into the two GitHub clients | 0003 | no |
-| `GraphQLQueries` | Runs named `src/main/resources/graphql/*.graphql` documents; rejects mutations and subscriptions | 0004 | no |
+| Picocli commands | `all`, `ci`, `prs`, `reviews`, `summary`; common options | 0002 | `all`, `prs` and the options `--config`, `--section`, `--format`, `--width`, `--no-llm` (001) |
+| `MorningConfig` | Jackson YAML into records, polymorphic on `type`, with Bean Validation and a secret-value check; validates before any API call | 0008 | yes; all four types parse, only `my-prs` runs (001) |
+| `GitHubCredentials` | Token from `GITHUB_TOKEN`, then `GH_TOKEN`, then `gh auth token`; injected only into the two GitHub clients | 0003 | yes, GraphQL client only (001) |
+| `GraphQLQueries` | Runs named `src/main/resources/graphql/*.graphql` documents; rejects mutations and subscriptions | 0004 | yes (001) |
 | hub4j fetchers | Actions runs, jobs and logs; PR diffs | 0004 | no |
 | `ReadOnlyGitHubGateway` + `LlmToolbox` | The LLM's read-only tools, with allowlists, caps and budgets | 0003 | no |
 | AI services | `@RegisterAiService(modelName = "fast" \| "deep")`, structured outputs | 0006 | no |
 | Redaction filter | Strips token-like strings from any text sent to the LLM | 0003 | no |
 | Cache | `~/.cache/morning/`, keyed per section | 0008 | no |
-| Table renderer | Wraps cells to the terminal width; OSC-8 links on a TTY, markdown links with `--format md` | — | no |
+| Table renderer | Wraps cells to the terminal width; OSC-8 links on a TTY, markdown links with `--format md` | — | yes (001) |
 
 ## CLI
 
@@ -63,8 +64,8 @@ Common options:
 
 | Data | Client | How |
 |---|---|---|
-| My open PRs, reviews, checks, base-branch rollup | GraphQL | `my-prs.graphql`: `search`, `reviewDecision`, `statusCheckRollup` on the head commit **and** on `baseRef.target`. `contexts` are paged with `pr-checks-page.graphql` when there are more than 100 checks. |
-| Earlier check attempts (flakiness) | GraphQL | `checkSuites { checkRuns(filterBy: {checkType: ALL}) }`, only for PRs with failures |
+| My open PRs, reviews, checks | GraphQL | `my-prs.graphql`: `search` (org filters as `org:`/`-org:` qualifiers), `reviewDecision`, the head commit's `statusCheckRollup`. `contexts` are paged with `pr-checks-page.graphql` when there are more than 100 checks. |
+| Base-branch checks and earlier attempts | GraphQL | `base-and-attempts.graphql`, one request, only when some check fails: `nodes(ids: $refIds)` → the last 30 base commits with their checks; `nodes(ids: $prIds)` → `checkSuites { checkRuns(filterBy: {checkType: ALL}) }` on each failing PR's head commit. |
 | Tracking-issue comments and timeline | GraphQL | `tracking-issues.graphql`, one alias per issue: comments plus `timelineItems(itemTypes: [CROSS_REFERENCED_EVENT, CONNECTED_EVENT])` |
 | Linked issue status | GraphQL | `issue-status.graphql`, one alias per issue: `state`, `stateReason`, `assignees`, `closedByPullRequestsReferences` |
 | Workflow YAML at a SHA | GraphQL | `object(expression: "<sha>:<path>") { ... on Blob { text } }` |
@@ -174,14 +175,33 @@ libraries are unmaintained. It wraps cells to `--width` and grows rows verticall
 emits OSC-8 hyperlinks on a TTY and markdown links with `--format md`. `--format json`
 dumps the records.
 
+## My-PRs analysis (spec 001)
+
+1. **Fetch** (at most 2 requests, plus 1 per extra page of checks): search, then paging,
+   then base-and-attempts if anything fails.
+2. **Classify** each failing check, first match wins:
+   - *unrelated (fails on base)*: the most recent of the last 30 base commits that
+     finished a check with the same name failed it;
+   - *likely flaky*: an earlier attempt with that name on the head commit passed;
+   - otherwise *not analysed* (US2's LLM step will refine this later).
+3. **Group and sort**: changes requested, then CI failures not classified as unrelated,
+   then the rest; oldest update first within a group. Derive actions.
+4. **Render**: tty (box table, OSC-8 links), md, or json (`morning.my-prs/1`).
+
 ## Test strategy
 
-- `@QuarkusTest` with WireMock fixtures. GraphQL requests are matched on `operationName`.
-  hub4j's own WireMock recording approach is reused for Actions.
+- `@QuarkusTest` for beans, `@QuarkusMainTest` for the CLI end to end. GitHub is a local
+  WireMock (`wiremock-standalone`) with hand-written fixtures in the recorded response
+  shape; GraphQL requests are matched on `operationName`. hub4j's own WireMock recording
+  approach is reused for Actions.
+- Surefire sets `GITHUB_TOKEN` to a sentinel; tests assert it appears only in the
+  `Authorization` header.
 - AI services are mocked. Live tests are opt-in only (`-Dmorning.live=true`).
-- ArchUnit:
-  - only the gateway and fetchers depend on `org.kohsuke.github`;
-  - no hub4j mutator is called;
-  - `DynamicGraphQLClient` is confined to `GraphQLQueries`.
+- ArchUnit (`ReadOnlyBoundaryTest`):
+  - the SmallRye GraphQL client is confined to `GraphQLQueries` and its producer;
+  - only the client producer reads `GitHubCredentials.token()`;
+  - `org.kohsuke.github` is confined to `…github.actions` (no classes yet);
+  - no other package uses an HTTP client;
+  - no hub4j mutator is called (added with the first hub4j class, 002).
 - A GraphQL schema test validates every `.graphql` file against a vendored
   `schema.docs.graphql`.

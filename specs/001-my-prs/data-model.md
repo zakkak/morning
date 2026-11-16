@@ -44,7 +44,7 @@ The records below are mapped from `my-prs.graphql`, `pr-checks-page.graphql` and
 ```
 PullRequestNode(id, number, title, url, isDraft, mergeable: Mergeable,
                 reviewDecision: ReviewDecision?, updatedAt: Instant,
-                repo: String /* owner/name */, baseRefName, headRefOid,
+                repo: String /* owner/name */, baseRefName, baseRefId, headRefOid,
                 rollupState: RollupState?, checks: List<CheckContext>,
                 checksHasNextPage: boolean, checksEndCursor: String?)
 
@@ -55,7 +55,7 @@ CheckContext(name, kind: CHECK_RUN | STATUS_CONTEXT,
   # StatusContext.state: FAILURE, ERROR → FAILURE
   # Absent conclusion with status != COMPLETED → PENDING
 
-BaseHistory(repo, baseRefName, commits: List<BaseCommit>)       # newest first
+BaseHistory(refId, commits: List<BaseCommit>)                   # newest first; keyed by Ref node ID
 BaseCommit(oid, committedDate, checks: List<CheckContext>)
 
 CheckAttempts(prId, attemptsByName: Map<String, List<Outcome>>) # all attempts on head SHA
@@ -88,7 +88,8 @@ PullRequestStatus(pr: PullRequestNode, group: PrGroup,
 
 MyPrsReport(section: String, generatedAt: Instant,
             prs: List<PullRequestStatus>,        # sorted: group asc, updatedAt asc
-            apiRequests: int)                    # for SC-001
+            apiRequests: int,                    # for SC-001
+            warnings: List<String>)              # e.g. "showing 50 of 63 open PRs"
 ```
 
 ## State transitions

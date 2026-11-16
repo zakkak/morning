@@ -42,8 +42,9 @@ US2 (LLM relatedness) is deferred until after feature 002 builds the LLM boundar
 
 **Storage**: none. The config file is read-only. A cache arrives with 002.
 
-**Testing**: `quarkus-junit5` (`@QuarkusTest`, `@QuarkusMainTest`), `quarkus-wiremock-test`
-1.8.1, `archunit-junit5` 1.5.1, `graphql-java` (BOM 25.0, test scope)
+**Testing**: `quarkus-junit` (`@QuarkusTest`, `@QuarkusMainTest`), `wiremock-standalone`
+3.13.2 (research R8, as built), `archunit-junit5` 1.5.1, `graphql-java` (BOM 25.0, test
+scope)
 
 **Target Platform**: Linux and macOS, JVM (fast-jar). Native is a roadmap item.
 

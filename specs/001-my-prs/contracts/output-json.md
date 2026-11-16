@@ -27,6 +27,11 @@ only; breaking changes bump `schema`.
       "updatedAt": "2026-10-01T12:00:00Z"
     }
   ],
-  "apiRequests": 2
+  "apiRequests": 2,
+  "warnings": []
 }
 ```
+
+- `warnings`: non-fatal notes, for example `"showing 50 of 63 open PRs"`.
+- With several `my-prs` sections, one document is printed per section, one after another
+  (`jq` reads such a stream directly).

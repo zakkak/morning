@@ -1,6 +1,7 @@
 package net.zakkak.morning.github;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,13 @@ class GraphQLQueriesTest {
             "subscription S { s }" })
     void writesAreRejected(String document) {
         assertThrows(IllegalStateException.class, () -> Query.checkReadOnly("test", document));
+    }
+
+    @Test
+    void httpErrorsAreBrief() {
+        assertEquals("Unexpected response. Code=401, message=\"Unauthorized\" (check the GitHub token)",
+                GraphQLQueries.brief(new RuntimeException(
+                        "Unexpected response. Code=401, message=\"Unauthorized\", body=\"{\n  \"message\": \"Bad credentials\"\n}\"")));
     }
 
     @Test
